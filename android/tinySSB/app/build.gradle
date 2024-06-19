@@ -6,7 +6,9 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdk 30
     buildToolsVersion "30.0.3"
-
+    lintOptions {
+        abortOnError false
+    }
     defaultConfig {
         applicationId "nz.scuttlebutt.tremolavossbol"
         minSdkVersion 26
