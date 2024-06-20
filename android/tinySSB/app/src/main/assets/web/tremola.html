@@ -68,13 +68,16 @@
 
   <div id='lst:kanban' class=w100 style="overflow: hidden; display: none;"></div>
 
-  <div id="lst:games" style="overflow-y: auto; overflow-x: hidden; display: none; padding: 0px 5px 10px 5px; margin: 3px 3px 6px 3px; ">
-    <button class="game_button w100 light" onclick="load_chat('example');">
+  <div id="lst:games" class="games-list" style="display: none;">
+    <button class="game_button" onclick="startHangman();">
       <div class="game_item_content">
-        <div style="text-overflow: ellipsis; overflow: hidden;">Hangman</div>
-        <div style="text-overflow: clip; overflow: ellipsis;"><small>Members Info</small></div>
+        <img src="img/hangman.svg" alt="icon" class="game_icon">
+        <div class="game_details">
+          <div class="game_title"><strong>Hangman</strong></div>
+          <div class="game_info"><small>No open lobbies.</small></div>
+        </div>
       </div>
-      <div id="game-badge" class="game_badge">&gt;9</div>
+      <div id="hangmanGameBadge" class="game_badge">2</div>
     </button>
   </div>
 

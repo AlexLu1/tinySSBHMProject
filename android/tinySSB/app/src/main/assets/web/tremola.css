@@ -685,6 +685,13 @@ input:checked + .slider:before {
 }
 
   /* Game Launcher Window */
+.games-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0px 5px 10px 5px;
+    margin: 3px;
+}
+
 .game_button {
     width: 100%;
     overflow: hidden;
@@ -696,11 +703,10 @@ input:checked + .slider:before {
     text-align: left;
     cursor: pointer;
     display: block;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.7)
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.7);
 }
 
 .game_badge {
-    display: none;
     position: absolute;
     right: 0.5em;
     bottom: 0.9em;
@@ -708,21 +714,38 @@ input:checked + .slider:before {
     border-radius: 1em;
     height: 2em;
     width: 2em;
-    background: var(--red); /* Assuming red is a defined variable */
+    background: var(--red);
     color: white;
     font-size: small;
     line-height: 2em;
 }
 
 .game_item_content {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
 }
 
-.game_item_content small {
-    text-overflow: clip;
-    overflow: ellipsis;
+.game_icon {
+    height: 30px;
+    width: 30px;
+    margin-right: 20px;
+    margin-left: 10px;
+}
+
+.game_details {
+    overflow: hidden;
+    flex: 1;
+}
+
+.game_title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 20px;
+}
+
+.game_info {
+    text-overflow: ellipsis;
+    overflow: hidden;
     font-size: small;
 }
 
