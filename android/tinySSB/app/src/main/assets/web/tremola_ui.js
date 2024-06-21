@@ -133,7 +133,7 @@ function setScenario(s) {
             document.getElementById('tremolaTitle').style.position = null;
         }
 
-        if (s == "posts" || s == "settings" || s == "board" || s == "games") {
+        if (s == "posts" || s == "settings" || s == "board" ) {
             document.getElementById('tremolaTitle').style.display = 'none';
             document.getElementById('conversationTitle').style.display = null;
             // document.getElementById('plus').style.display = 'none';
