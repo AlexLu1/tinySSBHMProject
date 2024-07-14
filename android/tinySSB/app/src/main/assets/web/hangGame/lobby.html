@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="hangman.css" media="screen" />
+    <script type="text/javascript" charset="UTF-8" src="hangmanLobby.js"></script>
+</head>
+<body onload="loadLobbies();">
+
+<div id="lst:lobbies" class="lobbyList">
+    <button class="lobbyButton" onclick="startHangman();">
+        <div class="lobbyDetails">
+            <div class="lobbyHeader">
+                <div class="lobbyName"><strong>LobbyName</strong></div>
+                <div id="lobbyBadge" class="lobbyBadge">!</div>
+            </div>
+            <div class="lobbyInfo"><small>Participants</small></div>
+        </div>
+    </button>
+</div>
+
+<div id="plus">
+    <button class="newLobbyButton" onclick="plus_button();">+</button>
+</div>
+
+</body>
+</html>

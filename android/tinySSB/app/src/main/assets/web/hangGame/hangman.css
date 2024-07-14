@@ -1,0 +1,70 @@
+.lobbyList {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0px 5px 10px 5px;
+    margin: 3px;
+}
+.lobbyDetails {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0px 5px 10px 5px;
+    margin: 3px;
+}
+.lobbyButton {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--light);
+    padding: 10px;
+    margin: 6px 0;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.7);
+}
+.lobbyHeader {
+    display: flex;
+    align-items: center;
+}
+.lobbyName {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+.lobbyBadge {
+    margin-left: 10px; /* Space between name and badge */
+    text-align: center;
+    border-radius: 1em;
+    height: 2em;
+    width: 2em;
+    background: red;
+    color: white;
+    font-size: small;
+    line-height: 2em;
+}
+.lobbyInfo {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: small;
+}
+
+.newLobbyButton {
+  position: absolute;
+    top: calc(100% - 50pt);
+    left: calc(100% - 50pt);
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+    z-index: 999; /* high z-index */
+    background: #000; /* fallback */
+    background-color: #fff;
+    border: solid 1px #000;
+    border-radius: 50%;
+    font-size: xx-large;
+    line-height: 36pt;
+    font-family: HelveticaNeue-Light;
+  box-shadow: 0 0 30px rgba(0,0,0,0.7);
+}
