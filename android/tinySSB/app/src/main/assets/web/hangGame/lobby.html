@@ -4,23 +4,65 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="hangman.css" media="screen" />
     <script type="text/javascript" charset="UTF-8" src="hangmanLobby.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../scuttlesort.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../tremola.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../tremola_settings.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../tremola_ui.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../qrcode.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../pinch-zoom.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../board.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../board_ui.js"></script>
 </head>
-<body onload="loadLobbies();">
+<body onload="backend('ready');">
+<h1>Hangman Lobbies</h1>
 
-<div id="lst:lobbies" class="lobbyList">
+<div id="lobbyMenu:div" class="lobbyMenu">
+    <button id="lobbyMenu_button" class="lobbyMenu-button" onclick="lobbyMenu_button()">☰</button>
+    <div id="lobbyMenu_contentDiv" class="lobbyMenu-content">
+        <a href="#" onclick="lobbyMenu_showInvitations()">Invitations</a>
+    </div>
+</div>
+
+<div id="lobbyList:div" class="lobbyList">
     <button class="lobbyButton" onclick="startHangman();">
         <div class="lobbyDetails">
             <div class="lobbyHeader">
                 <div class="lobbyName"><strong>LobbyName</strong></div>
-                <div id="lobbyBadge" class="lobbyBadge">!</div>
             </div>
             <div class="lobbyInfo"><small>Participants</small></div>
         </div>
     </button>
 </div>
 
+<div id="popupLobbyInvitations:div" class="popup" onclick="popupInvitations_close(event)">
+    <h2>Your invitations:</h2>
+    <div id ="popupLobbyInvitations:ContentDiv" class="popup-Content">
+    </div>
+</div>
+
+<div id="popupCreateLobby:div" class="popup" onclick="popupCreateLobby_close(event)">
+    <div class="popup-Content">
+        <h2>Lobby Name</h2>
+        <input type="text" placeholder="Enter text here" class="popup-input">
+
+        <h2>Hangman Word</h2>
+        <input type="text" placeholder="Enter text here" class="popup-input">
+
+        <h2>Select Members to invite</h2>
+        <div id="popupCreateLobby:divMembers" class ="popupCreateLobby-Members" style=" margin: 3px;">
+            <div style="margin-top: 10pt;"><label><input type="checkbox" id="toggleSwitches1" style="margin-right: 10pt;">
+                <div class="contact_item_button light" style="display: inline-block;padding: 5pt;">Choice1<br>more text</div></label>
+            </div>
+        </div>
+
+        <button class="popupCreateLobby-confirmButton" onclick="popupCreateLobby_confirmButton()">Confirm</button>
+
+    </div>
+</div>
+
+
 <div id="plus">
-    <button class="newLobbyButton" onclick="plus_button();">+</button>
+    <button class="newLobbyButton" onclick="addLobbyButton();">+</button>
 </div>
 
 </body>

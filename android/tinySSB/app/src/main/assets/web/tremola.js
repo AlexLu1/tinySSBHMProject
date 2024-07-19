@@ -512,7 +512,8 @@ function load_contact_item(c) { // [ id, { "alias": "thealias", "initial": "T", 
     document.getElementById('lst:contacts').appendChild(item);
 }
 
-function fill_members() {
+function fill_members(id) {
+    console.log("test");
     var choices = '';
     for (var m in tremola.contacts) {
         choices += '<div style="margin-bottom: 10px;"><label><input type="checkbox" id="' + m;
@@ -521,7 +522,7 @@ function fill_members() {
         choices += '<div style="text-overflow: ellipis; overflow: hidden;"><font size=-2>' + m + '</font></div>';
         choices += '</div></label></div>\n';
     }
-    document.getElementById('lst:members').innerHTML = choices
+    document.getElementById(id).innerHTML = choices
     /*
       <div id='lst:members' style="display: none;margin: 10pt;">
         <div style="margin-top: 10pt;"><label><input type="checkbox" id="toggleSwitches2" style="margin-right: 10pt;"><div class="contact_item_button light" style="display: inline-block;padding: 5pt;">Choice1<br>more text</div></label></div>
@@ -827,6 +828,7 @@ function backend(cmdStr) { // send this to Kotlin (or simulate in case of browse
             args = atob(cmdStr[4])
             args = args.split(",").map(atob)
         }
+        console.log(args);
         var data = {
             'bid': cmdStr[1],
             'prev': prev,
@@ -845,7 +847,38 @@ function backend(cmdStr) { // send this to Kotlin (or simulate in case of browse
         // console.log('e=', JSON.stringify(e))
         b2f_new_event(e)
         console.log(e)
-    } else {
+    } else if (cmdStr[0] == 'hangman') {
+          var prev = cmdStr[2] //== "null" ? null : cmdStr[2]
+          if (prev != "null") {
+              prev = atob(cmdStr[2])
+              prev = prev.split(",").map(atob)
+          }
+          var args = cmdStr[4]
+          if (args != "null") {
+              args = atob(cmdStr[4])
+              args = args.split(",").map(atob)
+          }
+          console.log(args);
+          var data = {
+              'bid': cmdStr[1],
+              'prev': prev,
+              'op': cmdStr[3],
+              'args': args
+          }
+          var e = {
+              'header': {
+                  'tst': Date.now(),
+                  'ref': Math.floor(1000000 * Math.random()),
+                  'fid': myId
+              },
+              'confid': {},
+              'public': ["NGM", cmdStr[1], prev, cmdStr[3]].concat(args)
+          }
+          // console.log('e=', JSON.stringify(e))
+          b2f_new_event(e)
+          console.log(e)
+    }
+    else {
         // console.log('backend', JSON.stringify(cmdStr))
     }
 }
@@ -1052,12 +1085,17 @@ function b2f_new_in_order_event(e) {
             console.log("New kanban event")
             kanban_new_event(e)
             break
+        case "HGM":
+            console.log("New hangman event")
+            hangman_new_event(e)
+            break
         default:
             return
     }
     persist();
     must_redraw = true;
 }
+
 
 /**
  * This function is invoked whenever the backend receives a new log entry, regardless of whether the associated sidechain is fully loaded or not.
@@ -1107,6 +1145,7 @@ function b2f_new_incomplete_event(e) {
 function b2f_new_event(e) { // incoming SSB log event: we get map with three entries
                             // console.log('hdr', JSON.stringify(e.header))
     console.log('pub', JSON.stringify(e.public))
+    console.log('json', JSON.stringify(e))
     // console.log('cfd', JSON.stringify(e.confid))
     console.log("New Frontend Event: " + JSON.stringify(e.header))
 
@@ -1166,6 +1205,7 @@ function b2f_new_event(e) { // incoming SSB log event: we get map with three ent
             // if (curr_scenario == "chats") // the updated conversation could bubble up
             load_chat_list();
         } else if (e.public[0] == "KAN") { // Kanban board event
+        } else if (e.public[0] == "HGM") { // Hangman Create Lobby event, create actual lobby in b2f_in_order_event
         } else if (e.public[0] == "IAM") {
             var contact = tremola.contacts[e.header.fid]
             var old_iam = contact.iam
@@ -1260,5 +1300,6 @@ function b2f_initialize(id) {
     setScenario('chats');
     // load_chat("ALL");
 }
+
 
 // --- eof

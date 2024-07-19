@@ -1,3 +1,6 @@
+h1 {
+    text-align: center;
+}
 .lobbyList {
     overflow-y: auto;
     overflow-x: hidden;
@@ -68,3 +71,100 @@
     font-family: HelveticaNeue-Light;
   box-shadow: 0 0 30px rgba(0,0,0,0.7);
 }
+.contact_item_button {
+  border: none;
+  text-align: left;
+  vertical-align: top;
+  width: calc(100%-10em);
+  height: 3em;
+  font-size: medium;
+  border-radius: 4pt;
+  box-shadow: 0 0 5px rgba(0,0,0,0.7);
+  text-overflow: ellipis;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+.popup-Content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.popupCreateLobby-Members{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.lobbyMenu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+}
+
+.lobbyMenu-button {
+    background-color: #f1f1f1;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.lobbyMenu-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.lobbyMenu-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.buttontext {
+font-size: small;
+background-size: contain;
+background-repeat: no-repeat;
+background-position: center;
+height: 50px;
+padding: 3px;
+}
+
+.flat {
+  border: none;
+  font-size: small;
+  user-select: none;
+  height: 100%;
+}
+.flat:focus {
+  outline: none;
+}
+.flat:active {
+  color: red;
+}
+.passive {
+background-color: #51a4d2; // var(--passive);
+}
+
+.lobbyMenu-content a:hover {background-color: #f1f1f1}
+

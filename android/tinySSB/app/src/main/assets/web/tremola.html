@@ -11,6 +11,7 @@
   <script type="text/javascript" charset="UTF-8" src="pinch-zoom.min.js"></script>
   <script type="text/javascript" charset="UTF-8" src="board.js"></script>
   <script type="text/javascript" charset="UTF-8" src="board_ui.js"></script>
+  <script type="text/javascript" charset="UTF-8" src="hangGame/hangmanLobby.js"></script>
 </head>
 <body style="background-image: url('img/splash-as-background.jpg'); background-size: cover; background-color: white; overflow: hidden" onload="backend('ready');">
 <div style="width: 100%; height: 100%; margin: 0px">
@@ -69,7 +70,7 @@
   <div id='lst:kanban' class=w100 style="overflow: hidden; display: none;"></div>
 
   <div id="lst:games" class="games-list" style="display: none;">
-    <button class="game_button" onclick="startHangman();">
+    <button class="game_button" onclick="showHangmanLobby();">
       <div class="game_item_content">
         <img src="img/hangman.svg" alt="icon" class="game_icon">
         <div class="game_details">
@@ -560,6 +561,8 @@
     <!-- button class="flat passive buttontext" style="background-image: url('img/cancel.svg'); width: 50%; height: 50px; margin: 5px;" onclick="onBackPressed();">&nbsp;</--button -->
     <button class="flat passive buttontext" style="background-image: url('img/checked.svg'); width: 100%; height: 30px; margin: 3px;" onclick="members_confirmed();">&nbsp;</button>
   </div>
+
+
 
 
 

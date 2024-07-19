@@ -30,7 +30,8 @@ import tremolavossbol.R
 import java.net.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
-
+import android.webkit.WebViewClient
+import android.webkit.WebResourceRequest
 
 // import nz.scuttlebutt.tremolavossbol.MainActivity
 
@@ -124,8 +125,15 @@ class MainActivity : Activity() {
             }
         }
         */
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                view?.loadUrl(request?.url.toString())
+                return true
+            }
+        }
         val webStorage = WebStorage.getInstance()
         webView.addJavascriptInterface(wai, "Android")
+
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
 
