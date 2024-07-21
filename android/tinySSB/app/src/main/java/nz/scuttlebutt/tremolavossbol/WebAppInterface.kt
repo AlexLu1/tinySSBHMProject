@@ -236,6 +236,7 @@ class WebAppInterface(val act: MainActivity, val webView: WebView) {
                 val op: String = args[3]
                 val argsList: List<String>? = if(args[4] != "null") Base64.decode(args[4], Base64.NO_WRAP).decodeToString().split(",").map{ Base64.decode(it, Base64.NO_WRAP).decodeToString()} else null
                 hangman( hgm_lobby_id, prev, op, argsList)
+                Log.d("HangmanDebug", "lobbyid: $hgm_lobby_id, prev: $prev, op: $op, argsList: $argsList")
             }
             "iam" -> {
                 val new_alias = Base64.decode(args[1], Base64.NO_WRAP).decodeToString()

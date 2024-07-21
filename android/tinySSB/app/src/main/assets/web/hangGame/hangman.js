@@ -3,10 +3,10 @@ const HGMOperation = {
     INVITE: 'invite',
     INVITE_ACCEPT: 'invite/accept',
     INVITE_DECLINE: 'invite/decline',
-    LEAVE
+    LEAVE: 'leave'
 }
 
-function createHGMLobby(lobbyName,hangmanWord,members) {
+function createHGMLobby(lobbyName,hangmanWord) {
     var cmd = [HGMOperation.HGM_LOBBY_CREATE, lobbyName, hangmanWord]
     var data = {
         'hgm_lobby_id': null,
@@ -25,12 +25,12 @@ function hGM_send_to_backend(data) {
 }
 
 function hangman_new_lobby(e) {
-    console.log("hangman_new_lobby", e)
+    console.log("hangman_new_lobby", JSON.stringify(e));
     // parse data
-    var op = e.public[3]
-    var hgm_lobby_id = op == Operation.BOARD_CREATE ? e.header.ref : e.public[1]
-    var prev = e.public[2] != "null" ? e.public[2] : []
-    var args = e.public.length > 4 ? e.public.slice(4) : []
+    var op = e.public[3];
+    var hgm_lobby_id = op == HGMOperation.HGM_LOBBY_CREATE ? e.header.ref : e.public[1];
+    var prev = e.public[2] != "null" ? e.public[2] : [];
+    var args = e.public.length > 4 ? e.public.slice(4) : [];
 
     // add new entry if it is a new lobby
     if (!(hgm_lobby_id in tremola.hangman)) {
@@ -39,10 +39,10 @@ function hangman_new_lobby(e) {
             "sortedOperations": new Timeline(), // "linear timeline", sorted list of operationIds
             "members": [e.header.fid], // members of the hangman lobby
             "forgotten": false, // flag for hiding this lobby from the lobby list
-            "name": hgm_lobby_id.toString().slice(0, 15) // name of the lobby
-            "hangmanWord": [] //hangman word of lobby
+            "name": hgm_lobby_id.toString().slice(0, 15) + '...', // name of the lobby
+            "hangmanWord": [], //hangman word of lobby
             "curr_prev": [], // prev pointer
-            //"history": [],
+            "history": [],
             "lastUpdate": Date.now(),
             "unreadEvents": 0,
             "subscribed": false,
@@ -53,12 +53,12 @@ function hangman_new_lobby(e) {
     }
      var hangmanLobby = tremola.hangman[hgm_lobby_id]
 
-        if (op == Operation.HGM_LOBBY_CREATE) {
+        if (op == HGMOperation.HGM_LOBBY_CREATE) {
             hangmanLobby.name = args[0]
             hangmanLobby.hangmanWord = args[1]
             //hangmanLobby.flags = args.slice(1)
-            if (document.getElementById('popupInvitations:div').style.display != 'none')
-                if (document.getElementById("popupInvitation:" + hgm_lobby_id))
+            if (document.getElementById('popupLobbyInvitations:div').style.display != 'none')
+                if (document.getElementById("popupLobbyInvitation:" + hgm_lobby_id))
                     lobbyCreateInvitation(hgm_lobby_id)
             if (e.header.fid == myId)
                 hangmanLobby.subscribed = true // the creator of the board is automatically subscribed
@@ -82,7 +82,7 @@ function hangman_new_lobby(e) {
         var p = {"key": e.header.ref, "fid": e.header.fid, "fid_seq": e.header.seq, "body": body, "when": e.header.tst};
         hangmanLobby["operations"][e.header.ref] = p;
 
-        if (op == Operation.LEAVE && e.header.fid == myId) {
+        if (op == HGMOperation.LEAVE && e.header.fid == myId) {
             delete hangmanLobby.pendingInvitations[myId]
             hangmanLobby.subscribed = false
             load_hangmanLobby_list()
@@ -90,7 +90,7 @@ function hangman_new_lobby(e) {
         if (hangmanLobby.subscribed) {
             hangmanLobby.sortedOperations.add(e.header.ref, prev)
 
-            var independentOPs = [Operation.LEAVE] // these operations cannot be overwritten; their position in the linear timeline does not affect the resulting board
+            var independentOPs = [HGMOperation.LEAVE] // these operations cannot be overwritten; their position in the linear timeline does not affect the resulting board
 
             //  Ui update + update optimization // board.operations[e.header.ref].indx == board.sortedOperations.length -1
             if (hangmanLobby.sortedOperations.name2p[e.header.ref].indx == hangmanLobby.sortedOperations.linear.length - 1 || independentOPs.indexOf(hangmanLobby.operations[e.header.ref].body.cmd[0]) >= 0) { //if the new event is inserted at the end of the linear timeline or the position is irrelevant for this operation
@@ -107,31 +107,31 @@ function hangman_new_lobby(e) {
             load_hangmanLobby_list()
 
             // invite selected users (during Kanban board creation)
-            if (op == Operation.HGM_LOBBY_CREATE && e.header.fid == myId) {
+            if (op == HGMOperation.HGM_LOBBY_CREATE && e.header.fid == myId) {
                 var pendingInvites = []
                 for (var m in tremola.contacts) {
                     if (m != myId && document.getElementById(m).checked) {
-                        inviteUser(hgm_lobby_id, m)
+                        inviteUserHGMLobby(hgm_lobby_id, m)
                         console.log("Invited: " + m)
                     }
                 }
                 load_game(hgm_lobby_id)
             }
         } else {
-            if (op == Operation.INVITE && body.cmd[1] == myId) { // received invitation to board
+            if (op == HGMOperation.INVITE && body.cmd[1] == myId) { // received invitation to board
                 if (myId in hangmanLobby.pendingInvitations)
                     hangmanLobby.pendingInvitations[myId].push(e.header.ref)
                 else {
                     hangmanLobby.pendingInvitations[myId] = [e.header.ref]
-                    if (document.getElementById('popupLobbyInvitations:div').style.display != 'none') {
+                    //if (document.getElementById('popupLobbyInvitations:div').style.display != 'none') {
                         lobbyCreateInvitation(hgm_lobby_id)
-                        console.log("create invite NAME:" + tremola.hangman['hgm_lobby_id'].name)
-                    }
+                        console.log("create invite NAME:" + tremola.hangman[hgm_lobby_id].name)
+                   // }
 
                 }
             }
 
-            if (op == Operation.INVITE_ACCEPT && e.header.fid == myId) { // invitation accepted -> start sorting all events
+            if (op == HGMOperation.INVITE_ACCEPT && e.header.fid == myId) { // invitation accepted -> start sorting all events
                 hangmanLobby.subscribed = true
                 lobby_reload(hgm_lobby_id)
                 hangmanLobby.lastUpdate = Date.now()
@@ -141,13 +141,11 @@ function hangman_new_lobby(e) {
                 return
             }
 
-            if (op == Operation.INVITE_DECLINE && e.header.fid == myId) {
+            if (op == HGMOperation.INVITE_DECLINE && e.header.fid == myId) {
                 delete hangmanLobby.pendingInvitations[myId]
             }
         }
-
     }
-}
 
 function lobby_reload(hgm_lobby_id) {
     console.log("Hangman lobby reload " + hgm_lobby_id)
@@ -159,7 +157,7 @@ function lobby_reload(hgm_lobby_id) {
 
     for (var op in hangmanLobby.operations) {
         console.log("ADD op: " + op + ", prev:" + hangmanLobby.operations[op].body.prev)
-        hangmanLobby.sortedOperations.add(op, board.operations[op].body.prev)
+        hangmanLobby.sortedOperations.add(op, hangmanLobby.operations[op].body.prev)
     }
     apply_all_operationsHangman(hgm_lobby_id)
 
@@ -172,34 +170,43 @@ function lobby_reload(hgm_lobby_id) {
     }*/
 }
 
-function inviteAccept(hgm_lobby_id, prev) {
+function inviteHGMAccept(hgm_lobby_id, prev) {
     var hangmanLobby = tremola.hangman[hgm_lobby_id]
     var data = {
         'hgm_lobby_id': hgm_lobby_id,
-        'cmd': [Operation.INVITE_ACCEPT],
+        'cmd': [HGMOperation.INVITE_ACCEPT],
         'prev': prev
     }
     hGM_send_to_backend(data)
 }
-function inviteDecline(hgm_lobby_id, prev) {
+function inviteHGMDecline(hgm_lobby_id, prev) {
     var hangmanLobby = tremola.hangman[hgm_lobby_id]
     var data = {
         'hgm_lobby_id': hgm_lobby_id,
-        'cmd': [Operation.INVITE_DECLINE],
+        'cmd': [HGMOperation.INVITE_DECLINE],
         'prev': prev
+    }
+    hGM_send_to_backend(data)
+}
+function inviteUserHGMLobby(hgm_lobby_id, userID) {
+    var hangmanLobby = tremola.hangman[hgm_lobby_id]
+    var data = {
+        'hgm_lobby_id': hgm_lobby_id,
+        'cmd': [HGMOperation.INVITE, userID],
+        'prev': hangmanLobby.curr_prev
     }
     hGM_send_to_backend(data)
 }
 function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
     console.log("Apply:" + operationID)
     var hangmanLobby = tremola.hangman[hgm_lobby_id]
-    var curr_op = hangman['operations'][operationID]
+    var curr_op = hangmanLobby['operations'][operationID]
 
     var author_name = tremola.contacts[curr_op.fid].alias
     var historyMessage = author_name + " "
 
     switch (curr_op.body.cmd[0]) {
-        case Operation.HGM_LOBBY_CREATE:
+        case HGMOperation.HGM_LOBBY_CREATE:
             historyMessage += "created the lobby \"" + curr_op.body.cmd[1] + "\""
             hangmanLobby.name = curr_op.body.cmd[1]
             if (hangmanLobby.members.indexOf(curr_op.fid) < 0)
@@ -210,9 +217,8 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
               board.members.push(curr_op.fid)
             */
             break
-        case Operation.INVITE:
+        case HGMOperation.INVITE:
             historyMessage += "invited " + curr_op.body.cmd[1] + "."
-
             console.log("IDX: " + hangmanLobby.members.indexOf(curr_op.body.cmd[1]))
             console.log("INVITE USER: " + curr_op.body.cmd[1])
             console.log("PENDING: " + hangmanLobby.pendingInvitations)
@@ -223,10 +229,9 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                 console.log("PENDING: " + hangmanLobby.pendingInvitations)
                 hangmanLobby.pendingInvitations[curr_op.body.cmd[1]].push(curr_op.key)
             }
-            if (!document.getElementById('popupLobbyInvitations:div').style.display = 'none')
-                lobbyCreateInvitation(curr_op.body.cmd[1])
+
             break
-        case Operation.INVITE_ACCEPT:
+        case HGMOperation.INVITE_ACCEPT:
             if (curr_op.fid in hangmanLobby.pendingInvitations) { // check if the invite accept operation is valid
                 // check if one of the prevs of the accept message is actual a valid invitation
                 if (hangmanLobby.pendingInvitations[curr_op.fid].filter(op => hangmanLobby.operations[curr_op.key].body.prev.includes(op)).length > 0) {
@@ -240,16 +245,12 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                         hangmanLobby.subscribed = true
                     /*if (apply_on_ui) {*/
                     ui_update_lobby_title(hgm_lobby_id)
-                    //update invitations if displayed
-                    if (!document.getElementById('popupLobbyInvitations:div').style.display = 'none')
-                        lobbyCreateInvitation(curr_op.fid)
-                    /*}*/
                     break
                 }
             }
             console.log("WRONG INVITATION")
             break
-        case Operation.INVITE_DECLINE:
+        case HGMOperation.INVITE_DECLINE:
             if (curr_op.fid in hangmanLobby.pendingInvitations) { // check if the invite accept operation is valid
                 if (hangmanLobby.pendingInvitations[curr_op.fid].filter(op => hangmanLobby.operations[curr_op.key].body.prev.includes(op)).length > 0) {
                     historyMessage += "declined invitation"
@@ -259,11 +260,9 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                         hangmanLobby.members.splice(idx, 1)
                     }
                 }
-                if (!document.getElementById('popupLobbyInvitations:div').style.display = 'none')
-                    lobbyCreateInvitation(curr_op.fid)
             }
             break
-        case Operation.LEAVE:
+        case HGMOperation.LEAVE:
             historyMessage += "left"
             var idx = hangmanLobby.members.indexOf(curr_op.fid)
             if (idx >= 0) {
@@ -271,8 +270,6 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
             }
             delete hangmanLobby.pendingInvitations[curr_op.fid]
             ui_update_lobby_title(hgm_lobby_id)
-            if (!document.getElementById('popupLobbyInvitations:div').style.display = 'none')
-                lobbyCreateInvitation(curr_op.fid)
             break
     }
     //historyMessage += ",  " + curr_op.key // debug

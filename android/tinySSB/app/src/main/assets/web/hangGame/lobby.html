@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="hangman.css" media="screen" />
     <script type="text/javascript" charset="UTF-8" src="hangmanLobby.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="hangman.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../scuttlesort.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../tremola.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../tremola_settings.js"></script>
@@ -14,6 +15,11 @@
     <script type="text/javascript" charset="UTF-8" src="../board_ui.js"></script>
 </head>
 <body onload="backend('ready');">
+
+<button id="backButton" class="back-button" onclick="goBack()">
+    <img src="../img/back.svg" alt="Back">
+</button>
+
 <h1>Hangman Lobbies</h1>
 
 <div id="lobbyMenu:div" class="lobbyMenu">
@@ -24,29 +30,22 @@
 </div>
 
 <div id="lobbyList:div" class="lobbyList">
-    <button class="lobbyButton" onclick="startHangman();">
-        <div class="lobbyDetails">
-            <div class="lobbyHeader">
-                <div class="lobbyName"><strong>LobbyName</strong></div>
-            </div>
-            <div class="lobbyInfo"><small>Participants</small></div>
-        </div>
-    </button>
+
 </div>
 
 <div id="popupLobbyInvitations:div" class="popup" onclick="popupInvitations_close(event)">
-    <h2>Your invitations:</h2>
-    <div id ="popupLobbyInvitations:ContentDiv" class="popup-Content">
+    <div id ="popupLobbyInvitationsContent:div"  class="popup-Content">
+        <h2>Your invitations:</h2>
     </div>
 </div>
 
 <div id="popupCreateLobby:div" class="popup" onclick="popupCreateLobby_close(event)">
     <div class="popup-Content">
         <h2>Lobby Name</h2>
-        <input type="text" placeholder="Enter text here" class="popup-input">
+        <input type="text" id = "popupCreateLobbyName:text" placeholder="Enter text here" class="popup-input">
 
         <h2>Hangman Word</h2>
-        <input type="text" placeholder="Enter text here" class="popup-input">
+        <input type="text" id = "popupCreateLobbyWord:text" placeholder="Enter text here" class="popup-input">
 
         <h2>Select Members to invite</h2>
         <div id="popupCreateLobby:divMembers" class ="popupCreateLobby-Members" style=" margin: 3px;">

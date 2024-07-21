@@ -488,8 +488,6 @@ function menu_invite_create_entry(id) {
             document.getElementById('invite_author_' + id).innerHTML = ''
             document.getElementById('invite_btn_' + id).style.display = 'initial'
         }
-
-
         return
     }
 

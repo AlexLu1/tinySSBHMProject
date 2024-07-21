@@ -1,4 +1,6 @@
-
+function goBack(){
+    Android.loadWebPage("file:///android_asset/web/tremola.html")
+}
 
 function addLobbyButton() {
      document.getElementById('popupCreateLobby:div').style.display = 'block';
@@ -13,8 +15,12 @@ function showHangmanLobby(){
     Android.loadWebPage("file:///android_asset/web/hangGame/lobby.html")
 }
 function popupCreateLobby_confirmButton(){
-    document.getElementById('popupCreateLobby').style.display = 'initial';
-     backend(encodeBackend("CreateLobby", [lobbyName,gameWord]));
+    document.getElementById('popupCreateLobby:div').style.display = 'initial';
+    var lobbyName = document.getElementById('popupCreateLobbyName:text').value;
+    var hangmanWord = document.getElementById('popupCreateLobbyWord:text').value;
+    document.getElementById('popupCreateLobby:div').style.display = 'none';
+    createHGMLobby(lobbyName,hangmanWord);
+    //backend(encodeBackend("CreateLobby", [lobbyName,gameWord]));
 }
 function newLobbyConfirmed(lobbyName,gameWord){
     backend(encodeBackend("CreateLobby", [lobbyName,gameWord]));
@@ -25,11 +31,13 @@ function encodeBackend(operation, args){
     return backendMessage;
 }
 function lobbyMenu_showInvitations(){
-    document.getElementById('popupInvitations:div').style.display = 'block';
+    document.getElementById("lobbyMenu_contentDiv").style.display = "none";
+    document.getElementById('popupLobbyInvitations:div').style.display = 'block';
 }
 function popupInvitations_close(event) {
-    if (event.target == document.getElementById('popupInvitations:div')) {
-        document.getElementById('popupInvitations:div').style.display = 'none';
+    // Check if the click event occurred on the overlay (i.e., the popup itself)
+    if (event.target == document.getElementById('popupLobbyInvitations:div')) {
+        document.getElementById('popupLobbyInvitations:div').style.display = 'none';
     }
 }
 function lobbyMenu_button() {
@@ -52,7 +60,7 @@ function lobbyCreateInvitation(hgm_lobby_id) {
             document.getElementById("popupLobbyInvitation:" + hgm_lobby_id + ":name").innerHTML = hangmanLobby.name.length < 15 ? hangmanLobby.name : hangmanLobby.name.slice(0, 15) + '...'
         return
     }
-
+    console.log("hangman error:",JSON.stringify(hangmanLobby))
     if (hangmanLobby.subscribed) // already subscribed
         return
 
@@ -68,7 +76,7 @@ function lobbyCreateInvitation(hgm_lobby_id) {
     var lobby_name = hangmanLobby.name.length < 15 ? hangmanLobby.name : hangmanLobby.name.slice(0, 15) + '...'
 
 
-    var invHTML = "<div id='popupLobbyInvitation:" + hgm_lobby_id + "' class='popupLobbyInvitation'>"
+    var invHTML = "<div id='popupLobbyInvitation:" + hgm_lobby_id + "' class=''>"
     invHTML += "<div class='popupLobbyInvitation-textContainer'>"
     invHTML += "<div id='popupLobbyInvitation" + hgm_lobby_id + ":name' style='grid-area: name; padding-top: 5px; padding-left: 10px;font-size:15px'>" + lobby_name + "</div>"
     invHTML += "<div style='grid-area: author; padding-top: 2px; padding-left: 10px;font-size:8px'>From: " + inviteUserName + "</div></div>"
@@ -76,21 +84,21 @@ function lobbyCreateInvitation(hgm_lobby_id) {
     invHTML += "<div style='grid-area: btns;justify-self:end;display: flex;justify-content: center;align-items: center;'>"
     invHTML += "<div style='padding-right:8px;'>"
     //invHTML += "<div style='padding-right:10px;'>"
-    invHTML += "<button class='flat passive buttontext' style=\"height: 40px; background-image: url('../img/checked.svg'); width: 35px;margin-right:10px;background-color: #51a4d2\" onclick='popupLobbyInvitation_Accept(\"" + hgm_lobby_id + "\")'>&nbsp;</button>"//</div>"
-    invHTML += "<button class='flat passive buttontext' style=\"height: 40px; color: red; background-image: url('../img/cancel.svg');width: 35px;background-color: #51a4d2\" onclick='popupLobbyInvitation_Decline(\"" + hgm_lobby_id + "\")'>&nbsp;</button>"
+    invHTML += "<button class='buttontext' style=\"height: 40px; background-image: url('../img/checked.svg'); width: 35px;margin-right:10px;background-color: #51a4d2\" onclick='popupLobbyInvitation_Accept(\"" + hgm_lobby_id + "\")'>&nbsp;</button>"//</div>"
+    invHTML += "<button class='buttontext' style=\"height: 40px; color: red; background-image: url('../img/cancel.svg');width: 35px;background-color: #51a4d2\" onclick='popupLobbyInvitation_Decline(\"" + hgm_lobby_id + "\")'>&nbsp;</button>"
     invHTML += "</div></div></div>"
 
-    document.getElementById("popupLobbyInvitations:ContentDiv").innerHTML += invHTML
+    document.getElementById("popupLobbyInvitationsContent:div").innerHTML += invHTML
 }
 function popupLobbyInvitation_Accept(hgm_lobby_id){
-    inviteAccept(hgm_lobby_id, tremola.hangman[hgm_lobby_id].pendingInvitations[myId])
+    inviteHGMAccept(hgm_lobby_id, tremola.hangman[hgm_lobby_id].pendingInvitations[myId])
     delete tremola.hangman[hgm_lobby_id].pendingInvitations[myId]
     var inv = document.getElementById("popupLobbyInvitation:" + hgm_lobby_id)
     if (inv)
         inv.outerHTML = ""
 }
 function popupLobbyInvitation_Decline(){
-    inviteDecline(hgm_lobby_id, tremola.hangman[hgm_lobby_id].pendingInvitations[myId])
+    inviteHGMDecline(hgm_lobby_id, tremola.hangman[hgm_lobby_id].pendingInvitations[myId])
     delete tremola.hangman[hgm_lobby_id].pendingInvitations[myId]
     var inv = document.getElementById("popupLobbyInvitation:" + hgm_lobby_id)
     if (inv)
@@ -143,12 +151,12 @@ function load_hangmanLobby_list() {
             row += "<div style='white-space: nowrap;'><div style='text-overflow: ellipsis; overflow: hidden;'>" + hangmanLobby.name + "</div>";
             row += "<div style='text-overflow: clip; overflow: ellipsis;'><font size=-2>" + escapeHTML(mem) + ", </font><font size=-3>last changed: " + date + "</font> </div></div>";
             badgeId = hgm_lobby_id + "-badge_lobby"
-            badge = "<div id='" + badgeId + "' style='display: none; position: absolute; right: 0.5em; bottom: 0.9em; text-align: center; border-radius: 1em; height: 2em; width: 2em; background: var(--red); color: white; font-size: small; line-height:2em;'>&gt;9</div>";
+            badge = "<div id='" + badgeId + "' style='display: none; position: absolute; right: 0.5em; bottom: 0.9em; text-align: center; border-radius: 1em; height: 2em; width: 2em; background: #e85132; color: white; font-size: small; line-height:2em;'>&gt;9</div>";
             row += badge + "</button>";
             row += ""
             item.innerHTML = row;
             cl.appendChild(item);
-            ui_set_board_list_badge(hgm_lobby_id)
+            //ui_set_board_list_badge(hgm_lobby_id)
         }
     }
 }
@@ -181,11 +189,11 @@ function escapeHTML(str) {
     return new Option(str).innerHTML;
 }
 
-function ui_set_board_list_badge(hgm_lobby_id) {
+function ui_set_board_list_badge2(hgm_lobby_id) {
     var hangmanLobby = tremola.hangman[hgm_lobby_id]
     var e = document.getElementById(hgm_lobby_id + "-badge_lobby")
     var cnt
-    if (board.unreadEvents == 0) {
+    if (hangmanLobby.unreadEvents == 0) {
         e.style.display = 'none'
         return
     }

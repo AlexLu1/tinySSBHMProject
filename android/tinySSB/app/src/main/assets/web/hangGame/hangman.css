@@ -96,6 +96,12 @@ h1 {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
 }
+.w100 {
+width: 100%;
+}
+.light {
+  background-color: #ebf4fa; // var(--light);
+}
 
 .popup-Content {
     background-color: #fefefe;
@@ -105,6 +111,9 @@ h1 {
     width: 80%;
     max-width: 500px;
     text-align: center;
+}
+.no-top-margin {
+    margin-top: 0; /* Remove the top margin */
 }
 
 .popupCreateLobby-Members{
@@ -142,29 +151,37 @@ h1 {
     display: block;
 }
 .buttontext {
-font-size: small;
+/*font-size: small;*/
 background-size: contain;
 background-repeat: no-repeat;
 background-position: center;
-height: 50px;
-padding: 3px;
+/*height: 50px;*/
+/*padding: 3px;*/
 }
 
-.flat {
-  border: none;
-  font-size: small;
-  user-select: none;
-  height: 100%;
-}
+
 .flat:focus {
   outline: none;
 }
 .flat:active {
   color: red;
 }
-.passive {
-background-color: #51a4d2; // var(--passive);
-}
 
 .lobbyMenu-content a:hover {background-color: #f1f1f1}
+
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.back-button img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
 

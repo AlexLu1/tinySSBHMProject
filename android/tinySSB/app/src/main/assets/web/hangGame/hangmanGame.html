@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #wordDisplay {
+            font-size: 24px;
+            letter-spacing: 10px;
+        }
+        #message {
+            font-size: 20px;
+            color: red;
+        }
+        #hangmanImage {
+            margin: 20px;
+            width: 50%;
+            max-width: 300px;
+            height: auto;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <img id="hangmanImage" src="images/hangman0.png" alt="Hangman Image">
+    <div id="wordDisplay">_ _ _ _ _</div>
+    <br>
+    <input type="text" id="guessInput" maxlength="1">
+    <button onclick="makeLetterGuess()">Guess Letter</button>
+    <br>
+    <input type="text" id="wordGuessInput">
+    <button onclick="makeWordGuess()">Guess Word</button>
+    <div id="message"></div>
+    <br>
+    <div id="remainingAttempts">Remaining Attempts: 6</div>
+    <div id="attemptedLetters">Attempted Letters: </div>
+    <script src="hangmanGame.js"></script>
+</body>
+</html>
+

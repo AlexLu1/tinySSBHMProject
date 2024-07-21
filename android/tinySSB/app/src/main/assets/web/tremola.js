@@ -890,7 +890,8 @@ function resetTremola() { // wipes browser-side content
         "profile": {},
         "id": myId,
         "settings": get_default_settings(),
-        "board": {}
+        "board": {},
+        "hangman": {}
     }
     var n = recps2nm([myId])
 
@@ -1049,7 +1050,6 @@ function b2f_local_peer(type, identifier, displayname, status) {
       //refresh_connection_progressbar()
     }
 
-
     if (document.getElementById('connection-overlay').style.display != 'none')
         refresh_connection_entry(identifier)
 }
@@ -1087,7 +1087,7 @@ function b2f_new_in_order_event(e) {
             break
         case "HGM":
             console.log("New hangman event")
-            hangman_new_event(e)
+            hangman_new_lobby(e)
             break
         default:
             return
@@ -1218,6 +1218,7 @@ function b2f_new_event(e) { // incoming SSB log event: we get map with three ent
                 contact.initial = contact.alias.substring(0, 1).toUpperCase()
                 load_contact_list()
                 load_board_list()
+                load_hangmanLobby_list();
 
                 // update names in connected devices menu
                 for (var l in localPeers) {
@@ -1295,7 +1296,7 @@ function b2f_initialize(id) {
     load_chat_list()
     load_contact_list()
     load_board_list()
-
+    load_hangmanLobby_list();
     closeOverlay();
     setScenario('chats');
     // load_chat("ALL");
