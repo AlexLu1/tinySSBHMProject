@@ -8,7 +8,9 @@ const HGMOperation = {
     INVITE_DECLINE: 'invite/decline',
     LEAVE: 'leave',
     GUESS_LETTER: 'guessLetter', //user submitted a letter guess
-    GUESS_WORD: 'guessWord' //one user guessed the word correctly
+    GUESS_WORD: 'guessWord', //user guessed a word
+    WIN: 'win',
+    LOSE: 'lose'
 }
 
 function createHGMLobby(lobbyName,hangmanWord) {
@@ -88,7 +90,7 @@ function hangman_new_lobby(e) {
                 if (document.getElementById("popupLobbyInvitation:" + hgm_lobby_id))
                     lobbyCreateInvitation(hgm_lobby_id)
             if (e.header.fid == myId)
-                hangmanLobby.subscribed = true // the creator of the board is automatically subscribed
+                hangmanLobby.subscribed = true // the creator is automatically subscribed
         }
 
         if (!(hangmanLobby.sortedOperations instanceof Timeline)) { // deserialize ScuttleSort-Timeline
@@ -117,9 +119,8 @@ function hangman_new_lobby(e) {
         if (hangmanLobby.subscribed) {
             hangmanLobby.sortedOperations.add(e.header.ref, prev)
 
-            var independentOPs = [HGMOperation.LEAVE] // these operations cannot be overwritten; their position in the linear timeline does not affect the resulting board
+            var independentOPs = [HGMOperation.LEAVE] // these operations cannot be overwritten; their position in the linear timeline does not affect the resulting lobby
 
-            //  Ui update + update optimization // board.operations[e.header.ref].indx == board.sortedOperations.length -1
             if (hangmanLobby.sortedOperations.name2p[e.header.ref].indx == hangmanLobby.sortedOperations.linear.length - 1 || independentOPs.indexOf(hangmanLobby.operations[e.header.ref].body.cmd[0]) >= 0) { //if the new event is inserted at the end of the linear timeline or the position is irrelevant for this operation
                 apply_operationHangman(hgm_lobby_id, e.header.ref)
             } else {
@@ -133,7 +134,7 @@ function hangman_new_lobby(e) {
 
             load_hangmanLobby_list()
 
-            // invite selected users (during Kanban board creation)
+            // invite selected users (during Lobby creation)
             if (op == HGMOperation.HGM_LOBBY_CREATE && e.header.fid == myId) {
                 var pendingInvites = []
                 for (var m in tremola.contacts) {
@@ -144,7 +145,7 @@ function hangman_new_lobby(e) {
                 }
             }
         } else {
-            if (op == HGMOperation.INVITE && body.cmd[1] == myId) { // received invitation to board
+            if (op == HGMOperation.INVITE && body.cmd[1] == myId) { // received invitation to lobby
                 if (myId in hangmanLobby.pendingInvitations)
                     hangmanLobby.pendingInvitations[myId].push(e.header.ref)
                 else {
@@ -187,13 +188,6 @@ function lobby_reload(hgm_lobby_id) {
     }
     apply_all_operationsHangman(hgm_lobby_id)
 
-    /*if (curr_scenario == 'board' && curr_board == bid) {
-        closeOverlay()
-        curr_item = null
-        curr_column = null
-        curr_context_menu = null
-        load_board(bid)
-    }*/
 }
 
 function inviteHGMAccept(hgm_lobby_id, prev) {

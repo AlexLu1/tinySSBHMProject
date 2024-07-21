@@ -26,7 +26,7 @@ function initializeHangmanGame() {
     document.querySelector("button[onclick='makeLetterGuess()']").disabled = false;
     document.getElementById("wordGuessInput").disabled = false;
     document.querySelector("button[onclick='makeWordGuess()']").disabled = false;
-
+    apply_all_operationsHangman(lobby_id)
 };
 
 
@@ -88,12 +88,13 @@ function receiveLetterGuess(userName,guess){
             }
         }
     } else {
+        guessedLetters.push(guess);
+        updateAttemptedLetters();
         attempts++;
         updateHangmanImage();
     }
     document.getElementById("wordDisplay").textContent = correctGuesses.join(" ");
     document.getElementById("remainingAttempts").textContent = `Remaining Attempts: ${maxAttempts - attempts}`;
-    updateAttemptedLetters();
 
     if (correctGuesses.join("") === hangWord) {
         document.getElementById("message").textContent = "Congratulations! " + userName+ " won!";

@@ -17,7 +17,6 @@ function initializeHangmanLobby(){
     console.log("hangman state of json load lobby1", JSON.stringify(tremola));
     tremola = JSON.parse(window.localStorage.getItem('tremola'));
     backend('ready');
-
     console.log("hangman state of json load lobby2", JSON.stringify(tremola));
     gameRunning = false;
     load_hangmanLobby_list();
@@ -122,17 +121,8 @@ function popupLobbyInvitation_Decline(){
 
 function ui_update_lobby_title(hgm_lobby_id) {
     var hangmanLobby = tremola.hangman[hgm_lobby_id]
-    // update board list
     load_hangmanLobby_list();
-    // update title name
-    /*if (curr_board == hgm_lobby_id) {
-        var title = document.getElementById("conversationTitle"), bg, box;
-        title.style.display = null;
-        title.setAttribute('classList', hgm_lobby_id.forgotten ? ['gray'] : []);
-        box = "<div style='white-space: nowrap;'><div style='text-overflow: ellipsis; overflow: hidden;text-align: left;'><font size=+2><strong>" + "Kanban: " + escapeHTML(board.name) + "</strong></font></div>";
-        box += "<div style='color: black; text-overflow: ellipsis; overflow: hidden;text-align: left;'>" + escapeHTML(recps2display(board.members)) + "</div></div>";
-        title.innerHTML = box;
-    }*/
+
 }
 
 function load_hangmanLobby_list() {
@@ -154,7 +144,7 @@ function load_hangmanLobby_list() {
             var hangmanLobby = tremola.hangman[hgm_lobby_id]
             var date = new Date(hgm_lobby_idTimestamp[i][1])
             date = date.toDateString() + ' ' + date.toTimeString().substring(0, 5);
-            if (hangmanLobby.forgotten /*&& tremola.settings.hide_forgotten_boards*/)
+            if (hangmanLobby.forgotten )
                 continue
             var cl, mem, item, bg, row, badge, badgeId, cnt;
             cl = document.getElementById('lobbyList:div');
@@ -162,7 +152,7 @@ function load_hangmanLobby_list() {
             item = document.createElement('div');
             item.setAttribute('style', "padding: 0px 5px 10px 5px; margin: 3px 3px 6px 3px;");
             if (hangmanLobby.forgotten) bg = ' gray'; else bg = ' light';
-            row = "<button class='board_item_button w100" + bg + "' onclick='load_game(\"" + hgm_lobby_id + "\");' style='overflow: hidden; position: relative;'>";
+            row = "<button class='w100" + bg + "' onclick='load_game(\"" + hgm_lobby_id + "\");' style='overflow: hidden; position: relative;'>";
             row += "<div style='white-space: nowrap;'><div style='text-overflow: ellipsis; overflow: hidden;'>" + hangmanLobby.name + "</div>";
             row += "<div style='text-overflow: clip; overflow: ellipsis;'><font size=-2>" + escapeHTML(mem) + ", </font><font size=-3>last changed: " + date + "</font> </div></div>";
             badgeId = hgm_lobby_id + "-badge_lobby"
@@ -171,11 +161,11 @@ function load_hangmanLobby_list() {
             row += ""
             item.innerHTML = row;
             cl.appendChild(item);
-            //ui_set_board_list_badge(hgm_lobby_id)
+
         }
     }
 }
-function load_game(hgm_lobby_id) { //switches scene to board and changes title to board name
+function load_game(hgm_lobby_id) {
     curr_lobby = hgm_lobby_id;
     showGameLobby();
 }
@@ -184,16 +174,4 @@ function escapeHTML(str) {
     return new Option(str).innerHTML;
 }
 
-function ui_set_board_list_badge2(hgm_lobby_id) {
-    var hangmanLobby = tremola.hangman[hgm_lobby_id]
-    var e = document.getElementById(hgm_lobby_id + "-badge_lobby")
-    var cnt
-    if (hangmanLobby.unreadEvents == 0) {
-        e.style.display = 'none'
-        return
-    }
-    e.style.display = null
-    if (hangmanLobby.unreadEvents > 9) cnt = ">9"; else cnt = "" + hangmanLobby.unreadEvents
-    e.innerHTML = cnt
-}
 
