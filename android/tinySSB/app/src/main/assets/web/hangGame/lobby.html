@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="hangman.css" media="screen" />
     <script type="text/javascript" charset="UTF-8" src="hangmanLobby.js"></script>
     <script type="text/javascript" charset="UTF-8" src="hangman.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="hangmanGame.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../scuttlesort.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../tremola.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../tremola_settings.js"></script>
@@ -14,7 +15,7 @@
     <script type="text/javascript" charset="UTF-8" src="../board.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../board_ui.js"></script>
 </head>
-<body onload="backend('ready');">
+<body onload = "initializeHangmanLobby();">
 
 <button id="backButton" class="back-button" onclick="goBack()">
     <img src="../img/back.svg" alt="Back">

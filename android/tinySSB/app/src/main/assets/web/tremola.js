@@ -918,6 +918,12 @@ function persist() {
     window.localStorage.setItem("tremola", JSON.stringify(tremola));
 }
 
+function showHangmanLobby(){
+    console.log("hangman state of json load lobby", JSON.stringify(tremola));
+    persist();
+    Android.loadWebPage("file:///android_asset/web/hangGame/lobby.html")
+}
+
 /*
 function b2f_local_peer(p, status) { // wireless peer: online, offline, connected, disconnected
     console.log("local peer", p, status);
@@ -1296,7 +1302,6 @@ function b2f_initialize(id) {
     load_chat_list()
     load_contact_list()
     load_board_list()
-    load_hangmanLobby_list();
     closeOverlay();
     setScenario('chats');
     // load_chat("ALL");

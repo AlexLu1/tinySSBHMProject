@@ -1,4 +1,5 @@
 function goBack(){
+    persist();
     Android.loadWebPage("file:///android_asset/web/tremola.html")
 }
 
@@ -11,9 +12,23 @@ function popupCreateLobby_close(event) {
         document.getElementById('popupCreateLobby:div').style.display = 'none';
     }
 }
-function showHangmanLobby(){
-    Android.loadWebPage("file:///android_asset/web/hangGame/lobby.html")
+
+function initializeHangmanLobby(){
+    console.log("hangman state of json load lobby1", JSON.stringify(tremola));
+    tremola = JSON.parse(window.localStorage.getItem('tremola'));
+    backend('ready');
+
+    console.log("hangman state of json load lobby2", JSON.stringify(tremola));
+    gameRunning = false;
+    load_hangmanLobby_list();
+};
+
+function showGameLobby(){
+    persist();
+    window.localStorage.setItem('currentGameLobby', curr_lobby);
+    Android.loadWebPage("file:///android_asset/web/hangGame/hangmanGame.html")
 }
+
 function popupCreateLobby_confirmButton(){
     document.getElementById('popupCreateLobby:div').style.display = 'initial';
     var lobbyName = document.getElementById('popupCreateLobbyName:text').value;
@@ -161,28 +176,8 @@ function load_hangmanLobby_list() {
     }
 }
 function load_game(hgm_lobby_id) { //switches scene to board and changes title to board name
-    curr_board = bid
-    var b = tremola.board[bid]
-
-    b.unreadEvents = 0
-    persist()
-    ui_set_board_list_badge(bid)
-
-    var title = document.getElementById("conversationTitle"), bg, box;
-    title.style.display = null;
-    title.setAttribute('classList', bid.forgotten ? ['gray'] : []);
-    box = "<div style='white-space: nowrap;'><div style='text-overflow: ellipsis; overflow: hidden;text-align: left;'><font size=+2><strong>" + "Kanban: " + escapeHTML(b.name) + "</strong></font></div>";
-    box += "<div style='color: black; text-overflow: ellipsis; overflow: hidden;text-align: left;'>" + escapeHTML(recps2display(b.members)) + "</div></div>";
-    title.innerHTML = box;
-
-    document.getElementById("div:columns_container").innerHTML = "" //clear old content
-    setScenario('board')
-    document.getElementById("tremolaTitle").style.display = 'none';
-    document.getElementById("tremolaTitle").style.position = 'fixed';
-    title.style.display = null;
-
-    load_all_columns()
-    load_all_items()
+    curr_lobby = hgm_lobby_id;
+    showGameLobby();
 }
 
 function escapeHTML(str) {

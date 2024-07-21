@@ -1,15 +1,38 @@
+var curr_lobby; //holds id of current lobby
+var gameRunning = false;
+
 const HGMOperation = {
     HGM_LOBBY_CREATE: 'HGM_lobby/create',
     INVITE: 'invite',
     INVITE_ACCEPT: 'invite/accept',
     INVITE_DECLINE: 'invite/decline',
-    LEAVE: 'leave'
+    LEAVE: 'leave',
+    GUESS_LETTER: 'guessLetter', //user submitted a letter guess
+    GUESS_WORD: 'guessWord' //one user guessed the word correctly
 }
 
 function createHGMLobby(lobbyName,hangmanWord) {
     var cmd = [HGMOperation.HGM_LOBBY_CREATE, lobbyName, hangmanWord]
     var data = {
         'hgm_lobby_id': null,
+        'cmd': cmd,
+        'prev': null
+    }
+    hGM_send_to_backend(data)
+}
+function guessHGMLetter(letter,lobbyID){
+    var cmd = [HGMOperation.GUESS_LETTER, letter]
+    var data = {
+        'hgm_lobby_id': lobbyID,
+        'cmd': cmd,
+        'prev': null
+    }
+    hGM_send_to_backend(data)
+}
+function guessHGMWord(word,lobbyID){
+    var cmd = [HGMOperation.GUESS_WORD, word]
+    var data = {
+        'hgm_lobby_id': lobbyID,
         'cmd': cmd,
         'prev': null
     }
@@ -35,12 +58,16 @@ function hangman_new_lobby(e) {
     // add new entry if it is a new lobby
     if (!(hgm_lobby_id in tremola.hangman)) {
         tremola.hangman[hgm_lobby_id] = {
-            "operations": {}, // all received operations for this board
+            "operations": {}, // all received operations for this lobby
             "sortedOperations": new Timeline(), // "linear timeline", sorted list of operationIds
             "members": [e.header.fid], // members of the hangman lobby
             "forgotten": false, // flag for hiding this lobby from the lobby list
             "name": hgm_lobby_id.toString().slice(0, 15) + '...', // name of the lobby
             "hangmanWord": [], //hangman word of lobby
+            "guessedLetters": [], //guessed letters
+            "guessedWords": [], //guessed words
+            "remainingAttempts": [], //amount of attempts left
+            "winner" : [], //winner of the game
             "curr_prev": [], // prev pointer
             "history": [],
             "lastUpdate": Date.now(),
@@ -115,7 +142,6 @@ function hangman_new_lobby(e) {
                         console.log("Invited: " + m)
                     }
                 }
-                load_game(hgm_lobby_id)
             }
         } else {
             if (op == HGMOperation.INVITE && body.cmd[1] == myId) { // received invitation to board
@@ -213,9 +239,6 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                 hangmanLobby.members.push(curr_op.fid)
             if (curr_op.fid == myId)
                 hangmanLobby.subscribed = true
-            /*if(board.members.indexOf(curr_op.fid) < 0)
-              board.members.push(curr_op.fid)
-            */
             break
         case HGMOperation.INVITE:
             historyMessage += "invited " + curr_op.body.cmd[1] + "."
@@ -243,8 +266,8 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                     }
                     if (curr_op.fid == myId)
                         hangmanLobby.subscribed = true
-                    /*if (apply_on_ui) {*/
-                    ui_update_lobby_title(hgm_lobby_id)
+                    if (!gameRunning)
+                        ui_update_lobby_title(hgm_lobby_id)
                     break
                 }
             }
@@ -269,7 +292,26 @@ function apply_operationHangman(hgm_lobby_id, operationID, apply_on_ui) {
                 hangmanLobby.members.splice(idx, 1)
             }
             delete hangmanLobby.pendingInvitations[curr_op.fid]
-            ui_update_lobby_title(hgm_lobby_id)
+            if (!gameRunning)
+                ui_update_lobby_title(hgm_lobby_id)
+            break
+        case HGMOperation.GUESS_LETTER:
+            //check if letter already guessed
+            if ((curr_op.body.cmd[1] in hangmanLobby.guessedLetters))
+                break
+            hangmanLobby.guessedLetters.push(curr_op.body.cmd[1])
+            historyMessage += "guessed Letter" + curr_op.body.cmd[1];
+            if (gameRunning)
+                receiveLetterGuess(tremola.contacts[curr_op.fid].alias,curr_op.body.cmd[1]);
+            break
+        case HGMOperation.GUESS_WORD:
+            //check if letter already guessed
+            if ((curr_op.body.cmd[1] in hangmanLobby.guessedWords))
+                break
+            hangmanLobby.guessedWords.push(curr_op.body.cmd[1])
+            historyMessage += "guessed Word" + curr_op.body.cmd[1];
+            if (gameRunning)
+                receiveLetterGuess(tremola.contacts[curr_op.fid].alias,curr_op.body.cmd[1]);
             break
     }
     //historyMessage += ",  " + curr_op.key // debug
